@@ -128,3 +128,46 @@ result __(truncated)__
 ```
 
 
+### Price Estimate
+
+**GET /v1/estimates/price**
+
+https://developer.uber.com/v1/endpoints/#price-estimates
+
+run the `simple_price_estimates.rb` script
+
+`env $(cat .env | xargs) python simple_price_estimates.rb`
+
+result _(truncated)_
+
+```
+{
+  "prices": [
+    {
+      "localized_display_name": "uberX",
+      "high_estimate": 15,
+      "minimum": 4,
+      "duration": 791,
+      "estimate": "$11-15",
+      "distance": 3.81,
+      "display_name": "uberX",
+      "product_id": "6e731b60-2994-4f68-b586-74c077573bbd",
+      "low_estimate": 11,
+      "surge_multiplier": 1.0,
+      "currency_code": "USD"
+    },
+    {
+      "localized_display_name": "uberXL",
+      "high_estimate": 24,
+      "minimum": 7,
+      "duration": 791,
+      "estimate": "$18-24",
+      "distance": 3.81,
+      "display_name": "uberXL",
+      "product_id": "2d2af87b-b870-4286-a300-7e7a8a79cd8c",
+      "low_estimate": 18,
+      "surge_multiplier": 1.0,
+      "currency_code": "USD"
+    },
+...
+```
