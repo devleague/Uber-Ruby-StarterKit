@@ -304,6 +304,39 @@ review the following files relevant to setting up your rails app with oauth and 
 - [app/controllers/application_controller.rb](app/controllers/application_controller.rb)
 
 
+## Running Examples in Docker
 
+Docker is a great way to run this demo in a predictable isolated environment.
+
+Change your current working directory to the root of this project that you have cloned.
+
+_the --rm flag will create an ephemeral container that will destroy itself when you exit_
+
+**Starting a container with ruby 2.2.3 and rails 4.2.4**
+
+```
+docker run --rm --name uber-rails-starterkit -v "$PWD":/app -w /app -it -p 8080:8080 rails:4.2.4 bash
+```
+
+**Once you are in a running container**
+
+install the required dependencies
+
+```
+bundle install
+```
+
+then you can run any of the above commands, or start the server
+
+More info about the rails docker image https://hub.docker.com/_/rails/
+
+## Further Reading
+
+We highly recommend reading through the [api docs](https://developer.uber.com/v1/api-reference/), [api endpoints](https://developer.uber.com/v1/endpoints/), and [tutorials](https://developer.uber.com/v1/tutorials/) at https://developer.uber.com/
+
+
+## Issues?
+
+If you have any issues or problems with these examples, please report them on our [github issue tracker](https://github.com/devleague/Uber-Ruby-StarterKit/issues).
 
 
