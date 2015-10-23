@@ -12,9 +12,8 @@ The production api url is https://api.uber.com/v1/
 
 - have an uber account
 - create an app at https://developer.uber.com
-- have ruby installed (tested with ruby 2.2.3p173)
-- have rails installed (tested with rails 4.2.4)
 - clone this project, all commands are issued from inside this project directory
+- have ruby installed (tested with ruby 2.2.3p173)
 
 ### Environment Variables
 
@@ -73,7 +72,7 @@ https://developer.uber.com/v1/endpoints/#product-types
 
 run the `simple_products.rb` script
 
-`env $(cat .env | xargs) python simple_products.rb`
+`env $(cat .env | xargs) ruby simple_products.rb`
 
 result __(truncated)__
 
@@ -136,7 +135,7 @@ https://developer.uber.com/v1/endpoints/#price-estimates
 
 run the `simple_price_estimates.rb` script
 
-`env $(cat .env | xargs) python simple_price_estimates.rb`
+`env $(cat .env | xargs) ruby simple_price_estimates.rb`
 
 result _(truncated)_
 
@@ -181,7 +180,7 @@ https://developer.uber.com/v1/endpoints/#time-estimates
 
 run the `simple_time_estimates.rb` script
 
-`env $(cat .env | xargs) python simple_time_estimates.rb`
+`env $(cat .env | xargs) ruby simple_time_estimates.rb`
 
 result _(truncated)_
 
@@ -202,5 +201,109 @@ result _(truncated)_
     },
 ...
 ```
+
+
+## OAuth2 Requests
+
+*Requirements*
+
+- set your uber app redirect url in the [uber developer dashboard](https://developer.uber.com/dashboard)
+    - example: `http://localhost:8080/auth/uber/callback`
+- have rails installed (tested with rails 4.2.4)
+- install all dependencies using `bundle install`
+- run the rails servr with on port `8080`
+    - `env $(cat .env | xargs) rails server -b 0.0.0.0 -p 8080`
+
+_when developing your app with [omniauth](https://github.com/tmilewski/omniauth-uber)_
+
+add this to your `Gemfile`
+```
+gem 'omniauth-uber'
+```
+
+then `bundle install`
+
+
+### Configuration
+
+all configuration for authorizing with the uber api is in your `.env` file.
+
+[OmniAuth](https://github.com/tmilewski/omniauth-uber) reads the environment variables in `config/initializers/omniauth.rb`
+
+you must start the server with `env $(cat .env | xargs) rails server -b 0.0.0.0 -p 8080`
+
+
+### Authorizing
+
+visit the oauth2_server app in your browser, go to http://localhost:8080/auth/uber
+
+this route will redirect you to uber to login
+
+once you are authenticated with uber, and authorize the scopes requested, you will be redirected to the callback url http://localhost:8080/auth/uber/callback
+
+the authorized user information will be displayed on the `sessions#create` route, normally you would get or create the user using the information available in `request.env['omniauth.auth']` and then redirect the user back to your app.
+
+note the `credentials.token`
+
+example result on successful authorization
+_(truncated)_
+
+```
+{
+  "provider": "uber",
+  "uid": "5c768f51-9763-4d17-a9bd-2168f4a87722",
+  "info": {
+    "first_name": "John",
+    "last_name": "Doe",
+    "email": "uber@devleague.com",
+    "picture": "https://d1w2poirtb3as9.cloudfront.net/default.jpeg",
+    "promo_code": "xdevleague",
+    "name": "John Doe"
+  },
+  "credentials": {
+    "token": "SaMbnvDYqNt0rmmYUo8jLNhjR0rOK5",
+    "refresh_token": "3Y13o1wMNsRAUFUesEy92ozBUPhfgs",
+    "expires_at": 1448174362,
+    "expires": true
+  },
+...
+```
+
+the token is `SaMbnvDYqNt0rmmYUo8jLNhjR0rOK5`
+
+this user can now make authorized requests to the uber api
+
+test this manually by visiting http://localhost:8080/profile?access_token=[your token here]
+
+example
+
+```
+http://localhost:8080/profile?access_token=rgHxpYJABmBmiiG0DBOXvgoKyVY10v
+```
+
+response
+
+```
+{
+  "picture":"https:\/\/d1w2poirtb3as9.cloudfront.net\/default.jpeg",
+  "first_name":"Jonh",
+  "last_name":"Doe",
+  "promo_code":"xdemo",
+  "email":"uber@devleague.com",
+  "uuid":"5c768f51-9763-4d17-a9bd-2168f4a8772b"
+}
+```
+
+review the following files relevant to setting up your rails app with oauth and uber
+
+- [.env](.env)
+- [Gemfile](Gemfile)
+- [config/routes.rb](config/routes.rb)
+- [config/initializers/omniauth.rb](config/initializers/omniauth.rb)
+- [app/controllers/sessions_controller.rb](app/controllers/sessions_controller.rb)
+- [app/controllers/application_controller.rb](app/controllers/application_controller.rb)
+
+
+
 
 
